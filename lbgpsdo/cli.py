@@ -9,6 +9,7 @@ from .lbgpsdo import *
 #
 
 def command_setup(args):
+    # todo: check if `usb` group exists, create it if not, and add user to it
     import os
 
     rules_file = "99-lbgpsdo.rules"

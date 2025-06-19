@@ -16,15 +16,17 @@ virtual python environment.
 ```sh
 $ virtualenv DIRECTORY
 $ source DIRECTORY/bin/activate
-$ pip install -r requirements.txt
+$ pip install .
 ```
 
 Setup
 -----
 
-To access the device you need access permission to the device file. Placing
-the file `99-lbgpsdo.rules` under `/etc/udev/rules.d` will ensure that your
-systems `usb` group has access to the device.
+Run the `setup` command to copy the udev rules file to `/etc/udev/rules.d`.
+
+```sh
+$ gpsdo setup
+```
 
 If you do not already have a `usb` system group, you must create one and add
 your username to the group
@@ -43,7 +45,7 @@ The tool provides a set of subcommands for different tasks. Call it without
 specifying a subcommand to get a list of the available commands.
 
 ```
-$ ./lbgpsdo.py 
+$ gpsdo
 usage: lbgpsdo.py [-h]
                   {list,l,status,s,detail,d,modify,m,backup,b,restore,r,identify,i,analyze,a,pll,p}
                   ...
@@ -69,7 +71,7 @@ optional arguments:
 The `list` command shows all connected devices.
 
 ```
-$ ./lbgpsdo.py list
+$ gpsdo list
 1dd2:2210 /dev/hidraw0      G42610  GPS Reference Clock
 ```
 
@@ -81,7 +83,7 @@ the serial number of the GPSDO and the product string.
 The `status` command shows the status of all connected devices.
 
 ```
-$ ./lbgpsdo.py status
+$ gpsdo status
 G42610    /dev/hidraw0: SAT unlocked  PLL locked    Loss: 1
 ```
 
@@ -92,7 +94,7 @@ If more than one device is present, you can limit the list to specific devices
 by applying a filter based on the serial number or the device path.
 
 ```
-$ ./lbgpsdo.py status -s G42610
+$ gpsdo status -s G42610
 G42610    /dev/hidraw0: SAT unlocked  PLL locked    Loss: 1
 ```
 
@@ -103,7 +105,7 @@ device is connected, you must select the proper device by it's serial number
 or device path.
 
 ```
-$ ./lbgpsdo.py detail
+$ gpsdo detail
 Device information
 ------------------
 VID, PID:     0x2210:0x1dd2
@@ -159,7 +161,7 @@ This command will set the Output channel 1 divider to 12 and disable Output
 channel 2.
 
 ```
-$ ./lbgpsdo.py modify --nc1-ls 12 --disable-out2
+$ gpsdo modify --nc1-ls 12 --disable-out2
 ```
 
 To see the available parameters use the help feature of the command.
@@ -189,7 +191,7 @@ device.
 If you specify an invalid configuration an error is written out.
 
 ```
-$ ./lbgpsdo.py modify --nc1-ls 13 --disable-out2
+$ gpsdo modify --nc1-ls 13 --disable-out2
 Parameter error:
 nc1_ls: Output 1 divider NC1_LS must be 1 or even.
 ```
@@ -199,7 +201,7 @@ nc1_ls: Output 1 divider NC1_LS must be 1 or even.
 You can save the configuration of a device by means of the `backup` command.
 
 ```
-$ ./lbgpsdo.py backup --output save.json
+$ gpsdo backup --output save.json
 ```
 
 It will produce a JSON file containing the configuration.
@@ -226,7 +228,7 @@ You can even modifiy the file yourself with a text editor.
 To restore the configuration use the `restore` command.
 
 ```
-$ ./lbgpsdo.py restore --input save.json
+$ gpsdo restore --input save.json
 ```
 
 ### Identify channels
@@ -234,13 +236,13 @@ $ ./lbgpsdo.py restore --input save.json
 The `identify` command let the channels LED blink. The channel must be enabled.
 
 ```
-$ ./lbgpsdo.py identify --out1
+$ gpsdo identify --out1
 ```
 
 Resume to normal operation by using the `--off` parameter.
 
 ```
-$ ./lbgpsdo.py identify --off
+$ gpsdo identify --off
 ```
 
 ### Analyzing configurations
@@ -251,7 +253,7 @@ specified parameters. You don't have to start with a whole parameter set.
 Values which cannot be computed will be left undefined.
 
 ```
-$ ./lbgpsdo.py analyze --fin 5000000 --n3 5 --n2-hs 11 --n2-ls 450
+$ gpsdo analyze --fin 5000000 --n3 5 --n2-hs 11 --n2-ls 450
 Output settings
 ---------------
 Output 1:
@@ -310,14 +312,14 @@ the intermediate frequencies. It output just static text an doesn't acces
 any device.
 
 ```
-$ ./lbgpsdo.py pll
-  fin          f3   +-------+                                       fout1  
+$ gpsdo pll
+  fin          f3   +-------+                                       fout1
 ------> ÷ N3 -----> |       |   fosc                 +-> ÷ NC1_LS -------->
-                    |  PLL  | --------+--> ÷ N1_HS --|                     
+                    |  PLL  | --------+--> ÷ N1_HS --|
           +-------> |       |         |              +-> ÷ NC2_LS -------->
-          |         +-------+         |                             fout2  
-          |                           |                                    
-          +-- ÷ N2_LS <--- ÷ N2_HS <--+                                    
+          |         +-------+         |                             fout2
+          |                           |
+          +-- ÷ N2_LS <--- ÷ N2_HS <--+
 
 fin   =                                   10.000 kHz ...  16.000 MHz
 f3    = fin / N3                       =  10.000 kHz ...   2.000 MHz
