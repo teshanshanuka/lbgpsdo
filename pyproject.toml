@@ -16,7 +16,7 @@ dependencies = [
 ]
 
 [project.scripts]
-gpsdo = "lbgpsdo.main:main"
+gpsdo = "lbgpsdo.cli:main"
 
 [build-system]
 requires = ["hatchling"]
