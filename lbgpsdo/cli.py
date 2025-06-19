@@ -8,6 +8,32 @@ from .lbgpsdo import *
 # Command Callbacks
 #
 
+def command_setup(args):
+    import os
+
+    rules_file = "99-lbgpsdo.rules"
+    rules_file_dest = os.path.join("/etc/udev/rules.d", rules_file)
+
+    if os.path.exists(rules_file_dest):
+        sys.stderr.write(f"Rules file already exists at {rules_file_dest}\nSetup again? [y/N] ")
+        if input().lower() != "y":
+            sys.exit(1)
+
+    package_path = os.path.dirname(os.path.abspath(__file__))
+    rules_file_src = os.path.join(package_path, "rules", rules_file)
+    if not os.path.exists(rules_file_src):
+        sys.stderr.write(f"Could not find rules file at {rules_file_src}\n")
+        sys.exit(1)
+
+    cmd = f"cp '{rules_file_src}' '{rules_file_dest}'"
+    ret = os.system(cmd)
+    if ret != 0:
+        sys.stderr.write(f"Failed to copy rules file\nTry to copy manually. You might need to run as root.\n$ {cmd}\n")
+        sys.exit(1)
+
+    sys.stdout.write(f"Rules file copied to {rules_file_dest}\n")
+
+
 def command_list(args):
     for d in GPSDODevice.enumerate():
         sys.stdout.write("%04x:%04x %-16s  %s  %s\n" % \
@@ -340,6 +366,12 @@ def main():
     parser = argparse.ArgumentParser()
 
     subparsers = parser.add_subparsers()
+
+    parser_setup = subparsers.add_parser(
+        'setup',
+        help="Setup lbgpsdo for the first time")
+
+    parser_setup.set_defaults(func = command_setup)
 
 
     parser_list = subparsers.add_parser(
