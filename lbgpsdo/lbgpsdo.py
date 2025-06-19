@@ -20,14 +20,13 @@
 #
 
 import argparse
-from fractions import Fraction
-import hid
 import json
 import math
 import struct
 import sys
+from fractions import Fraction
 
-
+import hid
 
 USBIDS = \
 [
@@ -347,7 +346,7 @@ class GPSDO(object):
         phase         = None if fosc        is None or self.n1_hs is None or self.skew   is None else self.skew * self.n1_hs / fosc
         phaseres      = None if fosc        is None or self.n1_hs is None                        else self.n1_hs / fosc
         phaseangle    = None if self.nc2_ls is None or self.skew  is None                        else Fraction(self.skew % self.nc2_ls, self.nc2_ls)
-        phaseangleres = None if self.nc2_ls is None                                              else Fraction(1, self.nc2_ls) 
+        phaseangleres = None if self.nc2_ls is None                                              else Fraction(1, self.nc2_ls)
 
         freq = \
         {
@@ -1150,7 +1149,7 @@ def parser_add_multiinput(p):
     parser_multiinput = parser_multiinput.add_mutually_exclusive_group()
 
     parser_add_input(parser_multiinput)
-    
+
     parser_multiinput.add_argument(
         '-I', '--input-device',
         dest = 'input_device',
@@ -1173,7 +1172,7 @@ def parser_add_multioutput(p):
         title = "Output options")
 
     parser_add_output(parser_multioutput)
-    
+
     parser_multioutput.add_argument(
         '-O', '--output-device',
         dest = 'output_device',

@@ -1,0 +1,23 @@
+[project]
+name = "lbgpsdo"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Mario Haustein" }
+]
+maintainers = [
+    { name = "Mario Haustein" },
+    { name = "Teshan Liyanage" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "hid>=1.0.7",
+]
+
+[project.scripts]
+gpsdo = "lbgpsdo.main:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
