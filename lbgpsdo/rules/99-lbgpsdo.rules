@@ -1,2 +1,3 @@
 KERNEL=="hidraw*", ATTRS{idVendor}=="1dd2", ATTRS{idProduct}=="2210", GROUP="usb"
 KERNEL=="hidraw*", ATTRS{idVendor}=="1dd2", ATTRS{idProduct}=="2211", GROUP="usb"
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="1dd2", ATTRS{idProduct}=="2211", MODE:="0666"
